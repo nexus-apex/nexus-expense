@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Expenses | NexusExpense{% endblock %}
+{% block page_title %}Expenses{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search expenses...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Category</option>
+      <option value="travel" {% if status_filter == 'travel' %}selected{% endif %}>Travel</option>
+      <option value="food" {% if status_filter == 'food' %}selected{% endif %}>Food</option>
+      <option value="office" {% if status_filter == 'office' %}selected{% endif %}>Office</option>
+      <option value="software" {% if status_filter == 'software' %}selected{% endif %}>Software</option>
+      <option value="equipment" {% if status_filter == 'equipment' %}selected{% endif %}>Equipment</option>
+      <option value="marketing" {% if status_filter == 'marketing' %}selected{% endif %}>Marketing</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/expenses/create/" class="btn btn-primary">+ New Expense</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Title</th><th>Category</th><th>Amount</th><th>Date</th><th>Submitted By</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/expenses/{{ r.pk }}/edit/"><strong>{{ r.title }}</strong></a></td>
+        <td><span class="badge badge-blue">{{ r.get_category_display }}</span></td>
+        <td>{{ r.amount|floatformat:2 }}</td>
+        <td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td>
+        <td>{{ r.submitted_by|default:"-" }}</td>
+        <td class="actions">
+          <a href="/expenses/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/expenses/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No expenses found.</p>
+    <a href="/expenses/create/" class="btn btn-primary" style="margin-top:1rem">Create Expense</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
