@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} ExpenseCategory | NexusExpense{% endblock %}
+{% block page_title %}{% if editing %}Edit ExpenseCategory{% else %}New ExpenseCategory{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Budget</label>
+        <input type="number" step="0.01" name="budget" value="{{ record.budget|default:'0' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Spent</label>
+        <input type="number" step="0.01" name="spent" value="{{ record.spent|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Period</label>
+        <select name="period">
+          <option value="monthly" {% if record.period == 'monthly' %}selected{% endif %}>Monthly</option>
+          <option value="quarterly" {% if record.period == 'quarterly' %}selected{% endif %}>Quarterly</option>
+          <option value="annual" {% if record.period == 'annual' %}selected{% endif %}>Annual</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Manager</label>
+        <input type="text" name="manager" value="{{ record.manager|default:'' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-wrapper">
+        <input type="checkbox" name="active" id="id_active" {% if record.active %}checked{% endif %}>
+        <label for="id_active" style="margin-bottom:0">Active</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description">{{ record.description|default:'' }}</textarea>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} ExpenseCategory</button>
+      <a href="/expensecategories/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
